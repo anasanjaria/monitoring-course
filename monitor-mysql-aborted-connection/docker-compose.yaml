@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.1'
+    container_name: elasticsearch
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - "discovery.type=single-node"
+  kibana:
+    image: 'docker.elastic.co/kibana/kibana:7.17.1'
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+  metricbeat:
+    network_mode: host
+    image: 'docker.elastic.co/beats/metricbeat:7.17.1'
+    container_name: metricbeat
+    volumes:
+    - ./metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
+    depends_on:
+    - kibana
+    - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.21
+    tmpfs: /var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "3306:3306"
