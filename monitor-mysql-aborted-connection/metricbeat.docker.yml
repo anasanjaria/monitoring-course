@@ -1,0 +1,11 @@
+metricbeat.modules:
+- module: mysql
+  metricsets:
+  - "status"
+  period: 1m
+  hosts: ["tcp(localhost:3306)/"]
+  username: root
+  password: secret
+
+output.elasticsearch:
+  hosts: ["http://localhost:9200"]
