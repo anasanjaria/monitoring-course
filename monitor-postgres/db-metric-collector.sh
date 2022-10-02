@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script collects metrics via postgres query defined in a variable "query".
 
 # replace it with your desired query for monitoring
 query="SELECT
