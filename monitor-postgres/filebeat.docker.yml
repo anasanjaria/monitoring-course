@@ -1,0 +1,11 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+  - /metrics/query-output.log
+  json.add_error_key: true
+  fields:
+    type: "db.metrics"
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
