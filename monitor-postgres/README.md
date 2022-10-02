@@ -19,3 +19,6 @@ interval and dump it in a file.
 - These metrics will be shipped by `filebeat` to your `elasticsearch`
 - You can visualize these metrics using `kibana`.
 - Add watchers to inform team in case of any problem.
+
+## Resource
+- Read complete article on [medium](https://medium.com/@anasanjaria/monitor-postgres-performance-using-custom-queries-1c06a766969b)
