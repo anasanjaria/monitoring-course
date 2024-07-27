@@ -32,7 +32,13 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-fIs", "http://localhost"]
       interval: 30s
-
+  curl-request-client:
+    volumes:
+      - ./nginx-access-pipeline.json:/nginx-access-pipeline.json:Z
+    image: byrnedo/alpine-curl:3.17
+    command: [
+      "-X", "PUT", "http://elasticsearch:9200/_ingest/pipeline/filebeat-7.17.1-nginx-access-pipeline", "-H", "Content-Type: application/json", "-d", "@nginx-access-pipeline.json"
+    ]
 
 volumes:
   nginx-logs:
