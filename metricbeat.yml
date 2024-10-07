@@ -12,6 +12,19 @@ metricbeat.modules:
   - drop_event.when.regexp:
       system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|hostfs)($|/)'
 
+- module: mysql
+  metricsets:
+  - "status"
+  period: 1m
+  hosts: ["tcp(mysql:3306)/"]
+  username: root
+  password: secret
+  processors:
+  - add_fields:
+      target: db
+      fields:
+        name: demo
+
 # ====================== Index Lifecycle Management (ILM) ======================
 
 # Configure index lifecycle management (ILM). These settings create a write

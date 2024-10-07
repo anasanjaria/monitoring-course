@@ -29,4 +29,13 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:
       - elasticsearch
+      - mysql
     command: ["-e", "-E", "output.elasticsearch.hosts=['http://elasticsearch:9200']"]
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.30
+    tmpfs: /var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "3306:3306"
