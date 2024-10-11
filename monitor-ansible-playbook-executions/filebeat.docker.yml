@@ -1,0 +1,48 @@
+######################## Filebeat Configuration ############################
+
+# This file is a full configuration example documenting all non-deprecated
+# options in comments. For a shorter configuration example, that contains only
+# the most common options, please see filebeat.yml in the same directory.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/filebeat/index.html
+# https://www.elastic.co/guide/en/beats/filebeat/6.4/filebeat-reference-yml.html
+
+#=========================== Filebeat inputs =============================
+
+filebeat.inputs:
+- type: log
+  paths:
+    - /ansible/hosts/127.0.0.1
+
+#================================ Outputs ======================================
+
+# Configure what output to use when sending the data collected by the beat.
+
+#-------------------------- Elasticsearch output -------------------------------
+output.elasticsearch:
+  enabled: true
+  hosts: ["elasticsearch:9200"]
+
+setup.ilm.enabled: false
+
+processors:
+- dissect:
+    when:
+      not:
+        equals:
+          message: ""
+    tokenizer: "%{time} - %{playbook_path} - %{task_name} - %{task_cmd} - %{task_status} - %{task_output}"
+    field: "message"
+    target_prefix: "ansible"
+- drop_fields:
+    fields: ["message"]
+    ignore_missing: false
+- script:
+    lang: javascript
+    source: >
+      function process(event) {
+          var ansible_path = event.Get("log.file.path");
+          var host = ansible_path.split("/").pop();
+          event.Put('ansible.host', host)
+      }
