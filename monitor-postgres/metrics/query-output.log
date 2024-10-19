@@ -1,4 +1,3 @@
-{"tablename":"mvcc_test","livetuples":1,"deadtuples":0}
-{"tablename":"mvcc_test","livetuples":1,"deadtuples":0}
-{"tablename":"mvcc_test","livetuples":1,"deadtuples":0}
-{"tablename":"mvcc_test","livetuples":1,"deadtuples":0}
+{"active_connections":6}
+{"active_connections":6}
+{"active_connections":9}

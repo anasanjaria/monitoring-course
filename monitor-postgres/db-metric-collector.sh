@@ -2,11 +2,7 @@
 # This script collects metrics via postgres query defined in a variable "query".
 
 # replace it with your desired query for monitoring
-query="SELECT
-       relname AS TableName,
-       n_live_tup AS LiveTuples,
-       n_dead_tup AS DeadTuples
-       FROM pg_stat_user_tables"
+query="SELECT count(*) AS active_connections FROM pg_stat_activity"
 # name of the container
 name="postgres-metric-collector"
 # DB host
