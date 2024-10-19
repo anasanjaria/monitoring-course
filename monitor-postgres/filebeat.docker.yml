@@ -7,5 +7,7 @@ filebeat.inputs:
   fields:
     type: "db.metrics"
 
+setup.ilm.enabled: false
+
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   elasticsearch:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.1'
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.24'
     container_name: elasticsearch
     ports:
     - '9200:9200'
@@ -12,7 +12,7 @@ services:
     - demo
   kibana:
     container_name: kibana
-    image: 'docker.elastic.co/kibana/kibana:7.17.1'
+    image: 'docker.elastic.co/kibana/kibana:7.17.24'
     environment:
     - 'ELASTICSEARCH_HOSTS=http://elasticsearch:9200'
     depends_on:
@@ -37,7 +37,7 @@ services:
       POSTGRES_DB: 'demo'
   filebeat:
     container_name: filebeat
-    image: docker.elastic.co/beats/filebeat:7.17.1
+    image: docker.elastic.co/beats/filebeat:7.17.24
     depends_on:
       - kibana
     volumes:

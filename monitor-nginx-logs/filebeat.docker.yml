@@ -3,5 +3,7 @@ filebeat.modules:
   access:
     var.paths: ["/var/log/nginx/host.access.log"]
 
+setup.ilm.enabled: false
+
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
