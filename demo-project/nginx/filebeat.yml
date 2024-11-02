@@ -1,0 +1,9 @@
+filebeat.modules:
+- module: nginx
+  access:
+    var.paths: ["/var/log/nginx/app.access.log"]
+
+setup.ilm.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]

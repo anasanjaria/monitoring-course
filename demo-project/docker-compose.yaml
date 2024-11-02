@@ -1,0 +1,78 @@
+services:
+  elasticsearch:
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.24'
+    container_name: elasticsearch
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - "discovery.type=single-node"
+  kibana:
+    container_name: kibana
+    image: 'docker.elastic.co/kibana/kibana:7.17.24'
+    environment:
+      - 'ELASTICSEARCH_HOSTS=http://elasticsearch:9200'
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+  ##################### Metric collector ###########################################
+  nginx-metric-collector:
+    image: docker.elastic.co/beats/filebeat:7.17.24
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./nginx/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - nginx-logs:/var/log/nginx
+  metricbeat:
+    container_name: metricbeat
+    image: docker.elastic.co/beats/metricbeat:7.17.24
+    user: root
+    volumes:
+      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    command: [ "-e", "-E", "output.elasticsearch.hosts=['http://elasticsearch:9200']" ]
+
+  ##################### Logs shipper ###########################################
+  logs-shipper:
+    image: docker.elastic.co/beats/filebeat:7.17.24
+    container_name: logs-shipper
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./python-app/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - app-logs:/app/logs
+  #################################### Application with load balancer ###############
+  app:
+    container_name: app
+    build:
+      context: ./python-app
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - app-logs:/app/logs
+  nginx:
+    container_name: nginx
+    image: nginx:1.23.1
+    depends_on:
+      - app
+    volumes:
+      - nginx-logs:/var/log/nginx
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:Z
+    healthcheck:
+      test: [ "CMD", "curl", "-fIs", "http://localhost/health" ]
+      interval: 30s
+    ports:
+      - '80:80'
+
+volumes:
+  app-logs:
+  nginx-logs:

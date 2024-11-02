@@ -1,0 +1,39 @@
+# Reference file
+# https://github.com/elastic/beats/blob/v7.17.24/metricbeat/metricbeat.reference.yml
+
+metricbeat.modules:
+- module: system
+  period: 10s
+  metricsets:
+  - cpu
+  - memory
+  - filesystem
+  processors:
+  - drop_event.when.regexp:
+      system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|hostfs)($|/)'
+- module: docker
+  metricsets:
+  - "event"
+  hosts: ["unix:///var/run/docker.sock"]
+  period: 10s
+  processors:
+    - drop_event:
+        when:
+          not:
+            equals:
+              docker.event.status: restart
+
+# ====================== Index Lifecycle Management (ILM) ======================
+
+# Configure index lifecycle management (ILM). These settings create a write
+# alias and add additional settings to the index template. When ILM is enabled,
+# output.elasticsearch.index is ignored, and the write alias is used to set the
+# index name.
+
+# Enable ILM support. Valid values are true, false, and auto. When set to auto
+# (the default), the Beat uses index lifecycle management when it connects to a
+# cluster that supports ILM; otherwise, it creates daily indices.
+setup.ilm.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
