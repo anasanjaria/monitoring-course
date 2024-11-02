@@ -1,0 +1,14 @@
+#=========================== Filebeat inputs =============================
+
+filebeat.inputs:
+- type: log
+  paths:
+    - /app/logs/*.log
+  json.add_error_key: true
+  fields:
+    type: "demo-app"
+
+setup.ilm.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
