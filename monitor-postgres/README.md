@@ -2,11 +2,28 @@
 
 ![Monitor Postgres](./monitor-postgres-db-basic-workflow.png)
 
-Metricbeat supports postgres monitoring using [postgres module](https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-module-postgresql.html).
+Many articles recommend using custom queries to track specific PostgreSQL metrics. For example, the
+[AWS blog](https://aws.amazon.com/blogs/database/understanding-autovacuum-in-amazon-rds-for-postgresql-environments/) 
+suggests the following query to monitor dead tuples — a key indicator of table bloat:
 
-But sometimes we need to collect some custom metrics by using postgres queries as defined in this [aws post](https://aws.amazon.com/blogs/database/understanding-autovacuum-in-amazon-rds-for-postgresql-environments/).
+```sql
+SELECT 
+  relname AS TableName ,
+  n_live_tup AS LiveTuples,
+  n_dead_tup AS DeadTuples ,
+  last_autovacuum AS Autovacuum ,
+  last_autoanalyze AS Autoanalyze
+FROM pg_stat_user_tables;
+```
 
-This project aims to solve such problem that is it helps you to collect crucial metrics by using custom postgres query.
+While such queries are useful, there's often a gap when it comes to automating real-time monitoring of these 
+custom metrics.
+
+> How can we collect these results as actionable data, integrate them into our monitoring system, and receive alerts 
+> for potential performance issues?
+
+This project bridges that gap by providing a system to automatically track PostgreSQL metrics, visualize them, and
+trigger alerts when anomalies are detected.
 
 ## How to use?
 ```
@@ -21,4 +38,4 @@ interval and dump it in a file.
 - Add watchers to inform team in case of any problem.
 
 ## Resource
-- Read complete article on [medium](https://medium.com/@anasanjaria/monitor-postgres-performance-using-custom-queries-1c06a766969b)
+Read complete article on [medium](https://medium.com/@anasanjaria/monitor-postgres-performance-using-custom-queries-1c06a766969b)
